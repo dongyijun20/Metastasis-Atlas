@@ -31,11 +31,6 @@ ArchRsub.lung<- subsetArchRProject(
   cells = cells_to_keep_true, #来源于signac的barcodes
   outputDirectory = "ArchROutput_lung_filtered_with_signac"
 )
-Archsubproj.SISA137 <- subsetArchRProject(
-       ArchRProj = proj.137,
-       cells = cells_to_keep_SISA137, #来源于signac的barcodes
-       outputDirectory = "ArchROutput_lung137_filtered_with_signac"
-)
 #双细胞目前未成功
 #doubScores <- addDoubletScores(  
   #input = ArrowFiles_sample,  
