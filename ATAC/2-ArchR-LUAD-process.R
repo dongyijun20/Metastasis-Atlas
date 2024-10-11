@@ -51,11 +51,11 @@ saveArchRProject(ArchRProj = ArchRsub.lung, outputDirectory = "ArchRsub.lung", l
 ArchRsub.lung<- addIterativeLSI(  
   ArchRProj = ArchRsub.lung,  
   useMatrix = "TileMatrix",  
-  name = "IterativeLSI",  
-  iterations = 2,  
+  name = "IterativeLSI.3times",  
+  iterations = 3,  
   clusterParams = list(    
   resolution = c(0.2),    
-  sampleCells = 10000,   
+  sampleCells = 8000,   
   n.start = 10  
   ),  
   varFeatures = 25000,  
@@ -130,7 +130,3 @@ p3 <- plotEmbedding(ArchRProj = ArchRsub.lung, colorBy = "cellColData", name = "
 p4 <- plotEmbedding(ArchRProj = ArchRsub.lung, colorBy = "cellColData", name = "Clusters", embedding = "UMAPHarmony")
 p3 <- plotEmbedding(ArchRProj = ArchRsub.lung, colorBy = "cellColData", name = "Sample", embedding = "TSNEHarmony")
 p4 <- plotEmbedding(ArchRProj = ArchRsub.lung, colorBy = "cellColData", name = "Clusters", embedding = "TSNEHarmony")
-
-#未成功
-genescore<-getMatrixFromProject(ArchRsub.lung,useMatrix = "GeneScoreMatrix")
-save(genescore,file="result/LUAD/genescore.rdata")
