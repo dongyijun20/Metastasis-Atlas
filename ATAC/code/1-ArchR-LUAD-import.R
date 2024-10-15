@@ -41,3 +41,10 @@ Archsubproj.SISA137 <- subsetArchRProject(
   #input = ArrowFiles_sample,  
   #k = 10, #Refers to how many cells near a "pseudo-doublet" to count.  knnMethod = "UMAP", #Refers to the embedding to use for nearest neighbor search with doublet projection.  LSIMethod = 1
 #)
+
+doubScores <- addDoubletScores(
+  input = ArrowFiles_sample,
+  k = 10, #Refers to how many cells near a "pseudo-doublet" to count.
+  knnMethod = "UMAP", #Refers to the embedding to use for nearest neighbor search with doublet projection.
+  LSIMethod = 1
+)

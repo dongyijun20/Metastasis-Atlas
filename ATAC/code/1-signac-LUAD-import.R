@@ -26,13 +26,13 @@ seqlevels(annotations) <- paste0('chr', seqlevels(annotations))
 genome(annotations) <- "hg38"
 
 # add the gene information to the object
-Annotation(pbmc.137) <- annotations
+Annotation(test.137) <- annotations
 
 # compute nucleosome signal score per cell
-pbmc.137 <- NucleosomeSignal(object = pbmc.137)
+test.137 <- NucleosomeSignal(object = test.137)
 
 # compute TSS enrichment score per cell
-pbmc.137 <- TSSEnrichment(object = pbmc.137, fast = FALSE)
+test.137 <- TSSEnrichment(object = test.137, fast = FALSE)
 
 # # add blacklist ratio and fraction of reads in peaks
 # pbmc.137.137$pct_reads_in_peaks <- pbmc.137.137$peak_region_fragments / pbmc.137.137$passed_filters * 100
@@ -41,7 +41,7 @@ pbmc.137 <- TSSEnrichment(object = pbmc.137, fast = FALSE)
 # DensityScatter(pbmc.137.137, x = 'nCount_peaks', y = 'TSS.enrichment', log_x = TRUE, quantiles = TRUE)
 
 pbmc.137$high.tss <- ifelse(pbmc.137$TSS.enrichment > 3, 'High', 'Low')
-TSSPlot(pbmc.137.137, group.by = 'high.tss') + NoLegend()
+TSSPlot(pbmc.137, group.by = 'high.tss') + NoLegend()
 
 pbmc.137$nucleosome_group <- ifelse(pbmc.137$nucleosome_signal > 4, 'NS > 4', 'NS < 4')
 FragmentHistogram(object = pbmc.137, group.by = 'nucleosome_group')
