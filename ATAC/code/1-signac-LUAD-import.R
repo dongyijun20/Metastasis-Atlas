@@ -26,13 +26,13 @@ seqlevels(annotations) <- paste0('chr', seqlevels(annotations))
 genome(annotations) <- "hg38"
 
 # add the gene information to the object
-Annotation(test.137) <- annotations
+Annotation(pbmc) <- annotations
 
 # compute nucleosome signal score per cell
-test.137 <- NucleosomeSignal(object = test.137)
+pbmc <- NucleosomeSignal(object = pbmc)
 
 # compute TSS enrichment score per cell
-test.137 <- TSSEnrichment(object = test.137, fast = FALSE)
+pbmc <- TSSEnrichment(object = pbmc, fast = FALSE)
 
 # # add blacklist ratio and fraction of reads in peaks
 # pbmc.137.137$pct_reads_in_peaks <- pbmc.137.137$peak_region_fragments / pbmc.137.137$passed_filters * 100
@@ -53,10 +53,10 @@ VlnPlot(
   ncol = 5
 )
 
-pbmc.137 <- subset(
-  x = pbmc.137,
+pbmc <- subset(
+  x = pbmc,
   subset = nCount_peaks > 3000 &
-    nCount_peaks < 40000 &
+    nCount_peaks < 15000 &
     # pct_reads_in_peaks > 15 &
     # blacklist_ratio < 0.05 &
     nucleosome_signal < 5 &

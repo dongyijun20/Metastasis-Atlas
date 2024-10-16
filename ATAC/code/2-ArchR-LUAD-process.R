@@ -174,7 +174,7 @@ p4 <- plotEmbedding(ArchRProj = ArchRsub.lung, colorBy = "cellColData", name = "
 markersGS <- getMarkerFeatures(
   ArchRProj = ArchRsub.lung, 
   useMatrix = "GeneScoreMatrix", 
-  groupBy = "NewClusters.2",
+  groupBy = "Clusters",
   bias = c("TSSEnrichment", "log10(nFrags)"),
   testMethod = "wilcoxon"
 )
@@ -191,6 +191,11 @@ markerGenes  <- c(
   "GFAP", "S100B", #reactive astrocyte
   "CD3D", "IL7R" #T-Cells
 )
+markerGenes <- c("CD2","CD3D","CD3E","CD3G","CD7","IL7R","CCR7","CLDN5") #T cell marker
+markerGenes <- c("CD79A","CD79B","CD19","JCHAIN","MZB1") #B cell 
+markerGenes <- c("FCGR3A","CD14","FCGR1A") #monocytes
+markerGenes <- c("CPA3","S100P","PTTG1","LOXL2","MELTF","PKP2") #LUAD
+
 heatmapGS <- markerHeatmap(
   seMarker = markersGS, 
   cutOff = "FDR <= 0.01 & Log2FC >= 1.25", 
@@ -204,10 +209,22 @@ p <- plotEmbedding(
   ArchRProj = ArchRsub.lung, 
   colorBy = "GeneScoreMatrix", 
   name = markerGenes, 
-  embedding = "NewUMAP.2",
+  embedding = "UMAP",
   quantCut = c(0.01, 0.95),
   imputeWeights = NULL
 )
+p2 <- lapply(p, function(x){
+  x + guides(color = FALSE, fill = FALSE) + 
+    theme_ArchR(baseSize = 6.5) +
+    theme(plot.margin = unit(c(0, 0, 0, 0), "cm")) +
+    theme(
+      axis.text.x=element_blank(), 
+      axis.ticks.x=element_blank(), 
+      axis.text.y=element_blank(), 
+      axis.ticks.y=element_blank()
+    )
+})
+do.call(cowplot::plot_grid, c(list(ncol = 3),p2))
 p <- plotBrowserTrack(
   ArchRProj = ArchRsub.lung, 
   groupBy = "NewClusters.2", 
@@ -216,4 +233,19 @@ p <- plotBrowserTrack(
   downstream = 50000
 )
 grid::grid.newpage()
-grid::grid.draw(p$)
+
+
+
+seRNA <- readRDS("../RNA/resultLUAD.rds")
+ArchRsub.lung <- addGeneIntegrationMatrix(
+  ArchRProj = ArchRsub.lung, 
+  useMatrix = "GeneScoreMatrix",
+  matrixName = "GeneIntegrationMatrix",
+  reducedDims = "IterativeLSI",
+  seRNA = seRNA,
+  addToArrow = FALSE,
+  groupRNA = "celltype_bped_main",
+  nameCell = "predictedCell_Un",
+  nameGroup = "predictedGroup_Un",
+  nameScore = "predictedScore_Un"
+)
