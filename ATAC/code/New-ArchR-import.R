@@ -198,6 +198,7 @@ heatmapGS <- plotMarkerHeatmap(
   transpose = TRUE
 )
 ComplexHeatmap::draw(heatmapGS, heatmap_legend_side = "bot", annotation_legend_side = "bot")
+seRNA <- readRDS("LUAD.rds")
 ArchRsub.lungnew <- addGeneIntegrationMatrix(
   ArchRProj = ArchRsub.lungnew, 
   useMatrix = "GeneScoreMatrix",
@@ -210,3 +211,31 @@ ArchRsub.lungnew <- addGeneIntegrationMatrix(
   nameGroup = "predictedGroup_Un",
   nameScore = "predictedScore_Un"
 )
+cM <- as.matrix(confusionMatrix(ArchRsub.lungnew$Clusters, ArchRsub.lungnew$predictedGroup_Un))
+preClust <- colnames(cM)[apply(cM, 1 , which.max)]
+df<-cbind(preClust, rownames(cM)) #Assignments
+table(ArchRsub.lungnew$Sample,ArchRsub.lungnew$predictedGroup_Un)
+
+ArchRsub.lungnew$celltype_bped_main<-sapply(ArchRsub.lungnew$Clusters, function(x) df[df[,2]==x,1])
+table(ArchRsub.lungnew$celltype_bped_main)
+ArchRsub.lungnew$celltype_bped_main <- sub("(.*)\\-.*","\\1",ArchRsub.lungnew$celltype_bped_main)
+ArchRsub.lungnew$celltype_bped_main <- sub("(.*)\\:.*","\\1",ArchRsub.lungnew$celltype_bped_main)
+
+ArchRsub.lungnew$celltype_bped_main[ArchRsub.lungnew$Clusters%in%paste0("C",c(1:15))]<-"Malignant"
+pal <- paletteDiscrete(values = seRNA$celltype_bped_main)
+p1 <- plotEmbedding(
+  ArchRsub.lungnew, 
+  colorBy = "cellColData", 
+  name = "predictedGroup_Un", 
+  pal = pal
+)
+pal <- paletteDiscrete(values = ArchRsub.lungnew$celltype_bped_main)
+p2 <- plotEmbedding(
+  ArchRsub.lungnew, 
+  colorBy = "cellColData", 
+  name = "celltype_bped_main", 
+  pal = pal
+)
+plotPDF(p1,p2, name = "Plot-UMAP-RNA-Integration.pdf", ArchRProj = ArchRsub.lungnew, addDOC = FALSE, width = 5, height = 5)
+
+ArchRsub.lungnew <- addGroupCoverages(ArchRProj = ArchRsub.lungnew, groupBy = "celltype_bped_main")
